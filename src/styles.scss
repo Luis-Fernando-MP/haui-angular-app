@@ -1,1 +1,22 @@
-/* You can add global styles to this file, and also import other style files */
+@use "tailwindcss";
+
+:root {
+  color-scheme: dark;
+}
+
+@theme {
+  --color-tn1: #eb0e21;
+  --color-tn2: #8318fd;
+
+  --color-bg1: #0f0f11;
+  --color-bg2: #19191d;
+  --color-bg3: #232125;
+
+  --color-fn1: #ccc9cf;
+  --color-fn2: #a39fa9;
+  --color-fnA: #ffffff;
+
+  --font-title: "Libre Baskerville", serif;
+  --font-body: "Work Sans", sans-serif;
+  --font-accent: "Pacifico", cursive;
+}
