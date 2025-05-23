@@ -1,18 +1,193 @@
-<h2>Tu país actual:</h2>
+<div
+  class="absolute top-1/2 left-1/2 z-10 text-fnA transition-all duration-500 ease-in-out pointer-none: select-none"
+  [class.flying]="isFlying"
+  *ngIf="isFlying"
+>
+  <p class="text-8xl">✈️</p>
+</div>
 
-@if (currentCountry()) {
-<section>
-  hola
-  <!-- <img
-      [src]="country.flags.png"
-      alt="Bandera de {{ country.name.common }}"
-      width="100"
+<section
+  class="h-full max-h-[800px] p-5 overflow-auto scrollbar-hide border-sm"
+>
+  @if(countries | async; as countries) {
+
+  <form
+    class="max-w-full mx-auto bg-bg2 p-6 rounded-sm mb-5 flex flex-col gap-4 w-[400px]"
+    [formGroup]="form()"
+  >
+    <h2 class="text-3xl font-bold text-fn1 text-center mb-6">Mi viaje ✈️</h2>
+
+    <div>
+      <label for="origin" class="block text-sm font-medium text-fn1 mb-1"
+        >Desde Latinoamérica</label
+      >
+      <select
+        id="origin"
+        name="origin"
+        formControlName="fromCountry"
+        class="rounded px-3 py-2 bg-bg3 text-fnA border border-bg3 focus:outline-none focus:ring-0 focus:border-transparent placeholder:text-fn2"
+      >
+        <option disabled selected value="">Selecciona un país</option>
+        @for (country of americaCountries; track country.name.common) {
+        <option [value]="country.name.common">
+          {{ country.flag }} {{ country.name.common }}
+        </option>
+        }
+      </select>
+    </div>
+
+    <!-- Destino: Europa -->
+    <div>
+      <label for="destination" class="block text-sm font-medium text-fn1 mb-1"
+        >Hacia Europa</label
+      >
+      <select
+        id="destination"
+        name="destination"
+        formControlName="toCountry"
+        class="rounded px-3 py-2 bg-bg3 text-fnA border border-bg3 focus:outline-none focus:ring-0 focus:border-transparent placeholder:text-fn2"
+      >
+        <option disabled selected value="">Selecciona un país</option>
+        @for (country of europaCountries; track country.name.common) {
+        <option [value]="country.name.common">
+          {{ country.flag }} {{ country.name.common }}
+        </option>
+        }
+      </select>
+    </div>
+
+    <button
+      type="submit"
+      (click)="onSubmit($event)"
+      class="confirm-button"
+      [disabled]="isFlying"
+    >
+      @if (isFlying) {
+      <p class="animate-pulse">Procesando viaje...</p>
+      }@else {
+      <p>Comenzar viaje</p>
+      }
+    </button>
+  </form>
+  }
+
+  <!-- Información de vuelo -->
+  @if (form().valid) {
+  <div class="travel-card p-4 bg-bg2 rounded shadow-md max-w-md mx-auto my-4">
+    <h3 class="text-xl font-semibold mb-2">Detalles del viaje</h3>
+    <p><strong>Desde:</strong> {{ form().get("fromCountry")?.value }}</p>
+    <p><strong>Hacia:</strong> {{ form().get("toCountry")?.value }}</p>
+  </div>
+  } @else {
+  <div
+    class="error-message text-center mt-4 ravel-card p-4 bg-bg2 rounded shadow-md max-w-md mx-auto my-4"
+  >
+    Aparta tu viaje ya!!
+  </div>
+  }
+
+  <!-- Ubicación actual -->
+  @if (currentCountry | async; as cc) {
+
+  <h2 class="text-3xl font-bold text-fn1 mb-4 text-center uppercase">
+    Ubicación actual
+  </h2>
+
+  <!-- IP y Ubicación -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+    <div class="bg-bg2 p-4 rounded-xl">
+      <h3 class="text-xl font-semibold text-fn1 mb-2">IP & Red</h3>
+      <p class="text-fn2"><strong>IP:</strong> {{ cc.ip.ip }}</p>
+      <p class="text-fn2"><strong>Organización:</strong> {{ cc.ip.org }}</p>
+      <p class="text-fn2"><strong>ASN:</strong> {{ cc.ip.asn }}</p>
+      <p class="text-fn2"><strong>Red:</strong> {{ cc.ip.network }}</p>
+    </div>
+
+    <div class="bg-bg2 p-4 rounded-xl">
+      <h3 class="text-xl font-semibold text-fn1 mb-2">Ubicación</h3>
+      <p class="text-fn2"><strong>Ciudad:</strong> {{ cc.ip.city }}</p>
+      <p class="text-fn2"><strong>Región:</strong> {{ cc.ip.region }}</p>
+      <p class="text-fn2"><strong>Código Postal:</strong> {{ cc.ip.postal }}</p>
+      <p class="text-fn2">
+        <strong>Lat / Long:</strong> {{ cc.ip.latitude }},
+        {{ cc.ip.longitude }}
+      </p>
+    </div>
+  </div>
+
+  <!-- País -->
+
+  <div
+    class="bg-bg2 p-4 rounded-xl mb-6 flex flex-col md:flex-row gap-6 items-start"
+  >
+    <!-- Bandera -->
+    <img
+      [src]="cc.country[0].flags.svg"
+      [alt]="cc.country[0].name.common"
+      class="w-full md:w-48 rounded-lg shadow-md object-contain"
     />
-    <h3>{{ country.name.common }} ({{ country.cca2 }})</h3>
-    <p>Capital: {{ country.capital[0] || "No info" }}</p>
-    <p>Población: {{ country.population | number }}</p>
-    <p>Región: {{ country.region }}</p> -->
+
+    <!-- Información -->
+    <div class="flex-1 space-y-2">
+      <h3 class="text-xl font-semibold text-fn1 mb-2">
+        {{ cc.country[0].name.common }}
+      </h3>
+      <div class="flex gap-2 items-center">
+        <p class="text-fn2"><strong>Escudo:</strong></p>
+        <img
+          [src]="cc.country[0].coatOfArms.svg"
+          [alt]="cc.country[0].name.common"
+          class="w-5 rounded-lg shadow-md object-contain"
+        />
+      </div>
+      <p class="text-fn2">
+        <strong>Capital:</strong> {{ cc.country[0].capital[0] }}
+      </p>
+      <p class="text-fn2">
+        <strong>Moneda:</strong> {{ cc.country[0].currencies.PEN.name }} ({{
+          cc.country[0].currencies.PEN.symbol
+        }})
+      </p>
+
+      <p class="text-fn2">
+        <strong>Idiomas:</strong>
+        @for (lang of cc.country[0].languages | keyvalue; track lang.key) {
+        {{ lang.value }}<span *ngIf="!$last">, </span>
+        }
+      </p>
+
+      <p class="text-fn2">
+        <strong>Población:</strong> {{ cc.country[0].population | number }}
+      </p>
+      <p class="text-fn2">
+        <strong>Área:</strong> {{ cc.country[0].area | number }} km²
+      </p>
+    </div>
+  </div>
+
+  <!-- Enlaces -->
+  <div class="flex flex-col md:flex-row gap-4">
+    <a
+      class="bg-gradient-to-bl from-tn1 to-tn2 p-[2px] rounded-sm"
+      [href]="cc.country[0].maps.googleMaps"
+      target="_blank"
+    >
+      <div class="bg-bg1 rounded-sm text-fnA px-4 py-2 text-center">
+        Ver en Google Maps
+      </div>
+    </a>
+  </div>
+  } @else if(errorLoadCountry) {
+  <div class="bg-bg2 p-4 rounded-xl mb-6 max-w-[400px] flex flex-col gap-2">
+    <h3 class="text-xl font-semibold text-fn1 mb-2">Algo a salido mal</h3>
+    <p class="text-fn2">
+      No se ha podido cargar la información de tu ubicación actual. Por favor,
+      verifica tu conexión a internet o intenta nuevamente más tarde.
+    </p>
+    <div>
+      <h4>Mas información:</h4>
+      <p class="text-fn2">{{ errorLoadCountry }}</p>
+    </div>
+  </div>
+  }
 </section>
-}@else {
-<p>Cargando...</p>
-}

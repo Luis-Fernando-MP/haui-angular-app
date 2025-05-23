@@ -1,3 +1,10 @@
+import { Country } from './country.type';
+
+export type IPMixCountry = {
+  ip: IpInfo;
+  country: Country[];
+};
+
 export type IpInfo = {
   asn: string;
   city: string;

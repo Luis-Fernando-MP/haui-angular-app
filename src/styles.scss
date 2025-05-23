@@ -22,3 +22,9 @@
   --font-body: "Work Sans", sans-serif;
   --font-accent: "Pacifico", cursive;
 }
+
+.scrollbar-hide {
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}

@@ -1,56 +1,92 @@
-import { Component, effect, inject, signal } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { CountryService } from '../../services/country.service';
 import { IpLocationService } from '../../services/ip-location.service';
+import { AsyncPipe, CommonModule } from '@angular/common';
+import { catchError, EMPTY, Observable } from 'rxjs';
+import { IPMixCountry } from '../../services/ip-location.type';
 import { Country } from '../../services/country.type';
-import { CommonModule } from '@angular/common';
+import {
+  FormControl,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 
 @Component({
   selector: 'app-globe',
   standalone: true,
   templateUrl: './globe.component.html',
   styleUrl: './globe.component.scss',
-  imports: [CommonModule],
+  imports: [AsyncPipe, CommonModule, ReactiveFormsModule],
 })
-export class GlobeComponent {
+export class GlobeComponent implements OnInit {
   private readonly country = inject(CountryService);
   private readonly ipLocation = inject(IpLocationService);
 
-  public countries: Country[] = [];
+  protected countries!: Observable<Country[]>;
+  protected currentCountry!: Observable<IPMixCountry>;
 
-  public isLoading = signal(true);
-  public error = signal<string | null>(null);
-  public currentCountry = signal<Country | null>(null);
+  protected americaCountries: Country[] = [];
+  protected europaCountries: Country[] = [];
 
-  constructor() {
-    // this.ipLocation.ipInfo$.subscribe((dt) => {
-    //   this.currentCountry = dt;
-    // });
+  protected errorLoadCountry!: string;
+  protected errorLoadCountries!: string;
 
-    const country = this.ipLocation.ipState();
-    // effect(() => {
-    //   this.currentCountry.set(country);
-    //   console.log(country);
-    // });
+  protected isFlying = false;
 
-    // this.country.getCountriesByRegion('americas').subscribe((data) => {
-    //   this.countries = data;
-    //   // this.isLoading = false;
-    // });
+  onSubmit(event: Event) {
+    event.preventDefault();
+    if (!this.form().valid) return;
+    this.isFlying = true;
+
+    setTimeout(() => {
+      this.isFlying = false;
+    }, 1000);
   }
 
-  // loadCountry() {
-  //   this.isLoading.set(true);
-  //   this.error.set(null);
+  protected form = signal(
+    new FormGroup({
+      fromCountry: new FormControl('', [
+        Validators.required,
+        Validators.minLength(2),
+      ]),
+      toCountry: new FormControl('', [
+        Validators.required,
+        Validators.minLength(2),
+      ]),
+    })
+  );
 
-  //   this.ipLocation.ipInfo$.subscribe({
-  //     next: (country) => {
-  //       this.currentCountry.set(country);
-  //       this.isLoading.set(false);
-  //     },
-  //     error: (err) => {
-  //       this.error.set('Error al cargar país');
-  //       this.isLoading.set(false);
-  //     },
-  //   });
-  // }
+  ngOnInit(): void {
+    this.currentCountry = this.ipLocation.getInfo().pipe(
+      catchError((error: string) => {
+        this.errorLoadCountry = error;
+        return EMPTY;
+      })
+    );
+
+    this.ipLocation.getInfo().subscribe((data) => {
+      this.form()
+        .get('fromCountry')
+        ?.setValue(data.country[0].name.common ?? '');
+    });
+
+    this.countries = this.country.getAllCountries().pipe(
+      catchError((error: string) => {
+        this.errorLoadCountries = error;
+        return EMPTY;
+      })
+    );
+
+    this.country.getAllCountries().subscribe((data) => {
+      this.americaCountries = data.filter(
+        (c) =>
+          (c.region === 'Americas' && c.subregion?.includes('South America')) ||
+          c.subregion?.includes('Central America') ||
+          c.subregion?.includes('Caribbean')
+      );
+
+      this.europaCountries = data.filter((c) => c.region === 'Europe');
+    });
+  }
 }
