@@ -1,25 +1,58 @@
-<main class="bg-bg1">
-  <a [routerLink]="['/']">Home</a>
-
-  <a [routerLink]="['/globe']" routerLinkActive="active">Globe</a>
-
-  <a [routerLink]="['/calculator']" routerLinkActive="active">Calculator</a>
-
-  <router-outlet />
-
-  <button
-    class="text-white px-4 sm:px-8 py-2 sm:py-3 bg-sky-700 hover:bg-sky-800"
+<div class="w-screen h-screen bg-gradient-to-br from-tn1 to-tn2 p-3">
+  <main
+    class="bg-bg1 w-full h-full rounded-[20px] grid grid-cols-1 md:grid-cols-[300px_1fr]"
   >
-    Submit
-  </button>
+    <section
+      class="flex justify-between items-center border-r-1 border-bg3 p-5 flex-col"
+    >
+      <div></div>
+      <nav class="flex flex-col items-center gap-15 w-full">
+        <a
+          [routerLink]="['/']"
+          class="flex items-center gap-2 px-6 py-3 rounded-lg bg-bg2 w-fit"
+        >
+          <img src="/assets/icons/logo.svg" width="30" alt="haui dev logo" />
+          <h5>Haui dev</h5>
+        </a>
 
-  <div class="3xl:grid-cols-6 grid grid-cols-2 md:grid-cols-4">
-    <!-- ... -->
+        <div class="flex flex-col items-center gap-2">
+          <a
+            [routerLink]="['/globe']"
+            class="p-3 rounded-lg flex items-center gap-2 bg-fn1"
+          >
+            <i-lucide [img]="GlobeIcon" [class]="'text-bg1'"></i-lucide>
+            <h5 class="text-bg1">Selector de destino</h5>
+          </a>
 
-    <h1 class="text-3xl font-bold underline bg">Hello world!</h1>
-    <div class="bg-bg1 text-fn1 font-serif">
-      <h1 class="bg-ju-100">Título</h1>
-      <p class="text-fn2 font-sans">Texto del cuerpo</p>
+          <a
+            [routerLink]="['/calculator']"
+            class="p-3 rounded-lg flex items-center gap-2 bg-fn1"
+          >
+            <i-lucide [img]="CalculatorIcon" [class]="'text-bg1'"></i-lucide>
+            <p class="text-bg1">Calculadora VAN</p>
+          </a>
+        </div>
+      </nav>
+
+      <div class="flex items-center gap-2">
+        <a
+          [routerLink]="['/']"
+          class="p-3 rounded-lg flex items-center gap-2 bg-bg2 w-fit"
+        >
+          <i-lucide [img]="GithubIcon" [class]="'text-fn2'"></i-lucide>
+          <h5 class="text-fn2">Github</h5>
+        </a>
+        <a
+          [routerLink]="['/']"
+          class="p-3 rounded-lg flex items-center gap-2 bg-bg2 w-fit"
+        >
+          <i-lucide [img]="FigmaIcon" [class]="'text-fn2'"></i-lucide>
+          <h5 class="text-fn2">Figma</h5>
+        </a>
+      </div>
+    </section>
+    <div class="flex justify-center items-center">
+      <router-outlet />
     </div>
-  </div>
-</main>
+  </main>
+</div>

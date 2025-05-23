@@ -1,1 +1,18 @@
-<p>globe works!</p>
+<h2>Tu país actual:</h2>
+
+@if (currentCountry()) {
+<section>
+  hola
+  <!-- <img
+      [src]="country.flags.png"
+      alt="Bandera de {{ country.name.common }}"
+      width="100"
+    />
+    <h3>{{ country.name.common }} ({{ country.cca2 }})</h3>
+    <p>Capital: {{ country.capital[0] || "No info" }}</p>
+    <p>Población: {{ country.population | number }}</p>
+    <p>Región: {{ country.region }}</p> -->
+</section>
+}@else {
+<p>Cargando...</p>
+}

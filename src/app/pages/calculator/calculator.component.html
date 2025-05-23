@@ -1,1 +1,81 @@
-<p>calculator works!</p>
+<div
+  class="flex flex-col items-center justify-center h-full w-full gap-6 px-4 py-8"
+  style="background-color: var(--color-bg1); color: var(--color-fn1)"
+>
+  <h1 class="text-3xl font-bold color-fn1">Calculadora de VAN</h1>
+
+  <form class="flex flex-col gap-4 w-full max-w-md" [formGroup]="form()">
+    <!-- Inversión inicial -->
+    <div class="flex flex-col">
+      <label for="initialInvestment" class="text-fn2 text-sm mb-3">
+        Inversión inicial (I):
+      </label>
+      <input
+        id="initialInvestment"
+        type="number"
+        formControlName="initialInvestment"
+        placeholder="2000"
+        class="rounded px-3 py-2 bg-bg2 text-fnA border border-bg3 focus:outline-none focus:ring-0 focus:border-transparent placeholder:text-fn2"
+      />
+    </div>
+
+    <!-- Tasa de interés -->
+    <div class="flex flex-col">
+      <label for="interestRate" class="text-fn2 text-sm mb-3">
+        Tasa de interés (r):
+      </label>
+      <input
+        id="interestRate"
+        type="number"
+        step="0.01"
+        formControlName="interestRate"
+        placeholder="0.05"
+        class="rounded px-3 py-2 bg-bg2 text-fnA border border-bg3 focus:outline-none focus:ring-0 focus:border-transparent placeholder:text-fn2"
+      />
+    </div>
+
+    <!-- Pagos -->
+    <div formArrayName="cashFlows" class="flex flex-col gap-2">
+      <p class="text-fn2 text-sm mb-1">Pagos (V₁, V₂...)</p>
+
+      @for (ctrl of cashFlows.controls; track ctrl) {
+      <div class="flex items-center gap-2">
+        <input
+          type="number"
+          [formControlName]="cashFlows.controls.indexOf(ctrl)"
+          placeholder="Pago {{ cashFlows.controls.indexOf(ctrl) + 1 }}"
+          class="rounded px-3 py-2 flex-grow bg-bg2 text-fnA border border-bg3 focus:outline-none focus:ring-0 focus:border-transparent placeholder:text-fn2"
+        />
+        <button
+          type="button"
+          (click)="removeCashFlow(cashFlows.controls.indexOf(ctrl))"
+          class="cursor-pointer"
+        >
+          <i-lucide [img]="TrashIcon" class="text-fn1"></i-lucide>
+        </button>
+      </div>
+      }
+
+      <button
+        type="button"
+        (click)="addCashFlow()"
+        class="rounded px-3 py-2 bg-bg2 font-bold focus:border-transparent cursor-pointer mt-3 flex items-center gap-2 justify-center"
+      >
+        <i-lucide [img]="PlusIcon" class="text-fn1"></i-lucide>
+        <h4>Agregar Pago</h4>
+      </button>
+    </div>
+  </form>
+
+  <button
+    type="button"
+    (click)="calculateNPV()"
+    class="mt-4 px-6 py-3 rounded shadow-md font-bold text-fn1 bg-gradient-to-r from-tn1 to-tn2"
+  >
+    Calcular VAN
+  </button>
+
+  @if (netPresentValue !== null) {
+  <div class="mt-6 text-xl font-semibold">VAN: {{ netPresentValue }} soles</div>
+  }
+</div>
