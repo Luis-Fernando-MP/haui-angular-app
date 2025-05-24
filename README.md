@@ -1,4 +1,5 @@
 # HauiAppCurso
+![524shots_so](https://github.com/user-attachments/assets/4186cc19-1ef1-4920-ada9-ea4a7012f526)
 
 This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.2.12.
 
